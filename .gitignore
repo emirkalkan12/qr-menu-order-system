@@ -1,0 +1,16 @@
+# React
+node_modules/
+build/
+dist/
+
+# .NET
+backend/bin/
+backend/obj/
+*.user
+*.suo
+.vs/
+
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+.env
