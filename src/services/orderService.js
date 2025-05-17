@@ -1,12 +1,8 @@
-import { mockData } from './mockApi';
-
-// Local state to manage orders
-let orders = [...mockData.orders];
-let nextOrderId = orders.length + 1;
+import api from './api';
 
 export const orderService = {
-  getAllOrders: () => {
-    return Promise.resolve(orders);
+  getAllOrders: async () => {
+    return await api.get('/orders');
   },
 
   getOrderById: async (id) => {
@@ -18,14 +14,10 @@ export const orderService = {
   },
 
   updateOrderStatus: async (id, status) => {
-    return await api.patch(`/orders/${id}/status`, { status });
+    return await api.put(`/orders/${id}/status`, status);
   },
 
   getOrdersByTable: async (tableId) => {
     return await api.get(`/orders/table/${tableId}`);
-  },
-
-  getDailyStats: async () => {
-    return await api.get('/orders/stats/daily');
-  },
+  }
 };

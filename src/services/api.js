@@ -1,14 +1,11 @@
 import axios from 'axios';
-import { mockApi } from './mockApi';
 
-// Use mockApi instead of real axios for development
-const api = process.env.NODE_ENV === 'production' ? 
-  axios.create({
-    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000/api',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }) : mockApi;
+const api = axios.create({
+  baseURL: 'http://localhost:3001/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 // Add a request interceptor
 api.interceptors.request.use(
