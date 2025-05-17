@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import Dashboard from './pages/Dashboard';
 import MenuManagement from './pages/MenuManagement';
 import OrderManagement from './pages/OrderManagement';
 import TableManagement from './pages/TableManagement';
+import CustomerMenu from './pages/CustomerMenu';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -25,13 +25,13 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      
-      <Container>
+        <Container>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<OrderManagement />} />
           <Route path="/menu" element={<MenuManagement />} />
           <Route path="/orders" element={<OrderManagement />} />
           <Route path="/tables" element={<TableManagement />} />
+          <Route path="/menu/:table" element={<CustomerMenu />} />
         </Routes>
       </Container>
     </div>

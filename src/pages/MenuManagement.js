@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Button, Form, Modal, Alert } from 'react-bootstrap';
+import { Row, Col, Card, Button, Form, Modal, Alert, Spinner } from 'react-bootstrap';
 import { menuService } from '../services/menuService';
+import axios from 'axios';
 
 const MenuManagement = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -18,6 +20,8 @@ const MenuManagement = () => {
     description: '',
     image: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -43,9 +47,30 @@ const MenuManagement = () => {
     }
   };
 
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const formDataImg = new FormData();
+      formDataImg.append('file', file);
+      // .NET API adresini güncelleyin!
+      const res = await axios.post('http://localhost:5220/api/image/upload', formDataImg, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData(prev => ({ ...prev, image: res.data.url }));
+      setImageFile(file);
+    } catch (err) {
+      setAlert({ show: true, message: 'Görsel yüklenemedi!', variant: 'danger' });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleAddItem = async () => {
@@ -312,14 +337,18 @@ const MenuManagement = () => {
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Görsel URL</Form.Label>
+              <Form.Label>Görsel Yükle</Form.Label>
               <Form.Control
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleInputChange}
-                placeholder="Görsel bağlantısını girin"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
               />
+              {uploading && <Spinner animation="border" size="sm" className="ms-2" />}
+              {formData.image && (
+                <div className="mt-2">
+                  <img src={formData.image} alt="Ürün görseli" style={{ maxWidth: 120, maxHeight: 120, borderRadius: 8 }} />
+                </div>
+              )}
             </Form.Group>
           </Form>
         </Modal.Body>
