@@ -112,27 +112,33 @@ const CustomerMenu = () => {
         {/* Menü Listesi */}
         <Col md={8}>
           <Row>
-            {filteredMenu.map((item) => (
-              <Col key={item.id} md={6} className="mb-4">
-                <Card>
-                  <Card.Img variant="top" src={item.image} alt={item.name} />
-                  <Card.Body>
-                    <Card.Title>{item.name}</Card.Title>
-                    <Card.Text>{item.description}</Card.Text>
-                    <div className="d-flex justify-content-between align-items-center">
-                      <h5>{item.price} ₺</h5>
-                      <Button 
-                        variant="primary" 
-                        onClick={() => addToCart(item)}
-                        disabled={!item.isAvailable}
-                      >
-                        {item.isAvailable ? 'Sepete Ekle' : 'Mevcut Değil'}
-                      </Button>
-                    </div>
-                  </Card.Body>
-                </Card>
+            {filteredMenu.length === 0 ? (
+              <Col xs={12} className="text-center text-muted py-5">
+                <span>No items.</span>
               </Col>
-            ))}
+            ) : (
+              filteredMenu.map((item) => (
+                <Col key={item.id} md={6} className="mb-4">
+                  <Card>
+                    <Card.Img variant="top" src={item.image} alt={item.name} />
+                    <Card.Body>
+                      <Card.Title>{item.name}</Card.Title>
+                      <Card.Text>{item.description}</Card.Text>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <h5>{item.price} ₺</h5>
+                        <Button 
+                          variant="primary" 
+                          onClick={() => addToCart(item)}
+                          disabled={!item.isAvailable}
+                        >
+                          {item.isAvailable ? 'Sepete Ekle' : 'Mevcut Değil'}
+                        </Button>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              ))
+            )}
           </Row>
         </Col>
 
