@@ -46,6 +46,13 @@ if (app.Environment.IsDevelopment())
 // wwwroot klasöründen statik dosya sunumu
 app.UseStaticFiles();
 
+// Karakter kodlaması için middleware
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Content-Type"] = "application/json; charset=utf-8";
+    await next();
+});
+
 app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.UseAuthorization();

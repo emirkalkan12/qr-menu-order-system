@@ -2,13 +2,31 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5221/api';
 
-export const menuService = {
-  getAllItems: async () => {
+// Axios instance oluştur
+const axiosInstance = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json; charset=utf-8'
+  }
+});
+
+export const menuService = {  getAllItems: async () => {
     try {
-      const response = await axios.get(`${API_URL}/menu`);
+      const response = await axiosInstance.get('/menu');
       return response.data;
     } catch (error) {
-      console.error('Menü verileri alınamadı:', error);
+      console.error('Menü verileri alınamadı:', error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  getAllCategories: async () => {
+    try {
+      const response = await axiosInstance.get('/category');
+      return response.data;
+    } catch (error) {
+      console.error('Kategoriler alınamadı:', error.response?.data || error.message);
       throw error;
     }
   },

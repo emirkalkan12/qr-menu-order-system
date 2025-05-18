@@ -11,5 +11,24 @@ namespace QRMenuAPI
         public DbSet<Category> Categories { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // Category entity configuration
+            modelBuilder.Entity<Category>()
+                .Property(c => c.Name)
+                .HasColumnType("nvarchar(100)");
+
+            // MenuItem entity configuration
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Name)
+                .HasColumnType("nvarchar(100)");
+
+            modelBuilder.Entity<MenuItem>()
+                .Property(m => m.Description)
+                .HasColumnType("nvarchar(500)");
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
