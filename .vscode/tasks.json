@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Development Environment",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-Command",
+				"Start-Process powershell -ArgumentList '-Command cd ${workspaceFolder}/backend; dotnet run'; Start-Process powershell -ArgumentList '-Command cd ${workspaceFolder}; npm install; npm start'"
+			],
+			"problemMatcher": [],
+			"group": "none",
+			"isBackground": true
+		}
+	]
+}

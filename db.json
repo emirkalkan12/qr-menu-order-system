@@ -1,0 +1,120 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Ana Yemekler",
+      "image": "https://source.unsplash.com/500x300/?main-course"
+    },
+    {
+      "id": 2,
+      "name": "Başlangıçlar",
+      "image": "https://source.unsplash.com/500x300/?appetizer"
+    },
+    {
+      "id": 3,
+      "name": "Tatlılar",
+      "image": "https://source.unsplash.com/500x300/?dessert"
+    },
+    {
+      "id": 4,
+      "name": "İçecekler",
+      "image": "https://source.unsplash.com/500x300/?drinks"
+    }
+  ],
+  "menu": [
+    {
+      "id": 1,
+      "name": "Klasik Burger",
+      "description": "180gr dana eti, özel sos, marul, domates, turşu, karamelize soğan",
+      "price": 120,
+      "category": "Ana Yemekler",
+      "image": "https://source.unsplash.com/500x300/?burger",
+      "preparationTime": "20 dk",
+      "isAvailable": true,
+      "ingredients": ["dana eti", "marul", "domates", "turşu", "soğan"]
+    },
+    {
+      "id": 2,
+      "name": "Tavuk Şiş",
+      "description": "Marine edilmiş tavuk, közlenmiş sebze, pilav",
+      "price": 90,
+      "category": "Ana Yemekler",
+      "image": "https://source.unsplash.com/500x300/?chicken-kebab",
+      "preparationTime": "25 dk",
+      "isAvailable": true,
+      "ingredients": ["tavuk", "biber", "domates", "soğan"]
+    },
+    {
+      "id": 3,
+      "name": "Mercimek Çorbası",
+      "description": "Geleneksel kırmızı mercimek çorbası",
+      "price": 35,
+      "category": "Başlangıçlar",
+      "image": "https://source.unsplash.com/500x300/?soup",
+      "preparationTime": "15 dk",
+      "isAvailable": true,
+      "ingredients": ["mercimek", "havuç", "soğan"]
+    },
+    {
+      "id": 4,
+      "name": "Künefe",
+      "description": "Antep fıstıklı özel künefe",
+      "price": 75,
+      "category": "Tatlılar",
+      "image": "https://source.unsplash.com/500x300/?dessert",
+      "preparationTime": "20 dk",
+      "isAvailable": true,
+      "ingredients": ["kadayıf", "peynir", "antep fıstığı"]
+    },
+    {
+      "id": 5,
+      "name": "Ayran",
+      "description": "Ev yapımı ayran",
+      "price": 15,
+      "category": "İçecekler",
+      "image": "https://source.unsplash.com/500x300/?ayran",
+      "isAvailable": true,
+      "ingredients": ["yoğurt", "su", "tuz"]
+    }
+  ],
+  "tables": [
+    {
+      "id": 1,
+      "number": 1,
+      "capacity": 4,
+      "status": "boş",
+      "orders": []
+    },
+    {
+      "id": 2,
+      "number": 2,
+      "capacity": 6,
+      "status": "dolu",
+      "orders": ["#001"]
+    }
+  ],
+  "orders": [
+    {
+      "id": "#001",
+      "tableId": 2,
+      "items": [
+        {
+          "id": 1,
+          "name": "Klasik Burger",
+          "quantity": 2,
+          "price": 120
+        },
+        {
+          "id": 5,
+          "name": "Ayran",
+          "quantity": 2,
+          "price": 15
+        }
+      ],
+      "status": "hazırlanıyor",
+      "totalAmount": 270,
+      "createdAt": "2025-05-15T10:30:00",
+      "updatedAt": "2025-05-15T10:35:00"
+    }
+  ]
+}

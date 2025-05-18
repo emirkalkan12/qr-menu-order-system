@@ -1,0 +1,54 @@
+@baseUrl = http://localhost:5221/api
+
+### Kategorileri Listele
+GET {{baseUrl}}/category
+
+### Yeni Kategori Ekle - Ana Yemekler
+POST {{baseUrl}}/category
+Content-Type: application/json
+
+{
+    "name": "Ana Yemekler",
+    "description": "Ana yemek kategorisi",
+    "isActive": true
+}
+
+### Yeni Kategori Ekle - İçecekler
+POST {{baseUrl}}/category
+Content-Type: application/json
+
+{
+    "name": "İçecekler",
+    "description": "Sıcak ve soğuk içecekler",
+    "isActive": true
+}
+
+### Yeni Kategori Ekle - Tatlılar
+POST {{baseUrl}}/category
+Content-Type: application/json
+
+{
+    "name": "Tatlılar",
+    "description": "Tatlı çeşitleri",
+    "isActive": true
+}
+
+### Yeni Kategori Ekle - Aperatifler
+POST {{baseUrl}}/category
+Content-Type: application/json
+
+{
+    "name": "Aperatifler",
+    "description": "Atıştırmalık ve ara sıcaklar",
+    "isActive": true
+}
+
+### Yeni Kategori Ekle - Salatalar
+POST {{baseUrl}}/category
+Content-Type: application/json
+
+{
+    "name": "Salatalar",
+    "description": "Taze salatalar",
+    "isActive": true
+}

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3001';
+const API_URL = 'http://localhost:5221/api';
 
 export const menuService = {
   getAllItems: async () => {
@@ -55,7 +55,7 @@ export const menuService = {
 
   getCategories: async () => {
     try {
-      const response = await axios.get(`${API_URL}/categories`);
+      const response = await axios.get(`${API_URL}/category`);
       return response.data;
     } catch (error) {
       console.error('Kategoriler alınamadı:', error);
@@ -63,9 +63,39 @@ export const menuService = {
     }
   },
 
-  getItemsByCategory: async (category) => {
+  createCategory: async (category) => {
     try {
-      const response = await axios.get(`${API_URL}/menu?category=${category}`);
+      const response = await axios.post(`${API_URL}/category`, category);
+      return response.data;
+    } catch (error) {
+      console.error('Kategori eklenemedi:', error);
+      throw error;
+    }
+  },
+
+  updateCategory: async (id, category) => {
+    try {
+      const response = await axios.put(`${API_URL}/category/${id}`, category);
+      return response.data;
+    } catch (error) {
+      console.error('Kategori güncellenemedi:', error);
+      throw error;
+    }
+  },
+
+  deleteCategory: async (id) => {
+    try {
+      await axios.delete(`${API_URL}/category/${id}`);
+      return { success: true };
+    } catch (error) {
+      console.error('Kategori silinemedi:', error);
+      throw error;
+    }
+  },
+
+  getItemsByCategory: async (categoryId) => {
+    try {
+      const response = await axios.get(`${API_URL}/menu/category/${categoryId}`);
       return response.data;
     } catch (error) {
       console.error('Kategori ürünleri alınamadı:', error);

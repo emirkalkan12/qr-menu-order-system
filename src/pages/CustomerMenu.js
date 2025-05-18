@@ -14,8 +14,7 @@ const CustomerMenu = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const menuData = await menuService.getMenuItems();
+      try {        const menuData = await menuService.getAllItems();
         const categoriesData = await menuService.getCategories();
         setMenu(menuData);
         setCategories(categoriesData);
@@ -79,9 +78,8 @@ const CustomerMenu = () => {
       alert('Sipariş gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
     }
   };
-
   const filteredMenu = selectedCategory
-    ? menu.filter((item) => item.category === selectedCategory)
+    ? menu.filter((item) => item.categoryId === selectedCategory.id)
     : menu;
 
   if (!tableNumber) return <Container className="py-4"><h3>Geçersiz masa numarası!</h3></Container>;
@@ -101,10 +99,9 @@ const CustomerMenu = () => {
         </Button>
         {categories.map((category) => (
           <Button
-            key={category.id}
-            variant={selectedCategory === category.name ? "primary" : "outline-primary"}
+            key={category.id}            variant={selectedCategory?.id === category.id ? "primary" : "outline-primary"}
             className="me-2 mb-2"
-            onClick={() => setSelectedCategory(category.name)}
+            onClick={() => setSelectedCategory(category)}
           >
             {category.name}
           </Button>
