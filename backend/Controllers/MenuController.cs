@@ -156,5 +156,65 @@ namespace QRMenuAPI.Controllers
                 return StatusCode(500, new { message = "Menü öğesi silinirken bir hata oluştu", error = ex.Message });
             }
         }
+
+        // GEÇİCİ: Duplicate MenuItem kayıtlarını silen endpoint
+        [HttpPost("fix-duplicates")]
+        public async Task<IActionResult> FixDuplicates()
+        {
+            var duplicates = _context.MenuItems
+                .GroupBy(m => m.Id)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.Skip(1))
+                .ToList();
+
+            _context.MenuItems.RemoveRange(duplicates);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"{duplicates.Count} duplicate MenuItems removed." });
+        }
+
+        // GEÇİCİ: Duplicate Category kayıtlarını silen endpoint
+        [HttpPost("fix-category-duplicates")]
+        public async Task<IActionResult> FixCategoryDuplicates()
+        {
+            var duplicates = _context.Categories
+                .GroupBy(c => c.Id)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.Skip(1))
+                .ToList();
+
+            _context.Categories.RemoveRange(duplicates);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"{duplicates.Count} duplicate Categories removed." });
+        }
+
+        // GEÇİCİ: Duplicate Order kayıtlarını silen endpoint
+        [HttpPost("fix-order-duplicates")]
+        public async Task<IActionResult> FixOrderDuplicates()
+        {
+            var duplicates = _context.Orders
+                .GroupBy(o => o.Id)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.Skip(1))
+                .ToList();
+
+            _context.Orders.RemoveRange(duplicates);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"{duplicates.Count} duplicate Orders removed." });
+        }
+
+        // GEÇİCİ: Duplicate OrderItem kayıtlarını silen endpoint
+        [HttpPost("fix-orderitem-duplicates")]
+        public async Task<IActionResult> FixOrderItemDuplicates()
+        {
+            var duplicates = _context.OrderItems
+                .GroupBy(oi => oi.Id)
+                .Where(g => g.Count() > 1)
+                .SelectMany(g => g.Skip(1))
+                .ToList();
+
+            _context.OrderItems.RemoveRange(duplicates);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"{duplicates.Count} duplicate OrderItems removed." });
+        }
     }
 }

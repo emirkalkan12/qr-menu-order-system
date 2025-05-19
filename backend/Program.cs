@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QRMenuAPI;
 using QRMenuAPI.Models;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,13 +36,36 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Veritabanını başlat ve seed verilerini yükle
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<QRMenuDbContext>();
+        context.Database.EnsureCreated();
+
+        // Seed SQL dosyasını oku ve çalıştır
+        var seedSqlPath = Path.Combine(AppContext.BaseDirectory, "config", "seed_clean.sql");
+        if (File.Exists(seedSqlPath))
+        {
+            var seedSql = File.ReadAllText(seedSqlPath);
+            context.Database.ExecuteSqlRaw(seedSql);
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Veritabanı başlatılırken bir hata oluştu.");
+    }
+}
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 
 // wwwroot klasöründen statik dosya sunumu
 app.UseStaticFiles();

@@ -1,21 +1,36 @@
--- Önce mevcut verileri temizleyelim
-DELETE FROM MenuItems;
-DELETE FROM Categories;
+-- Veritabanı temizleme işlemleri
+-- Önce ilişkili tabloları temizliyoruz (alt tablolardan başlayarak)
+DELETE FROM OrderItems; -- Sipariş detaylarını temizle
+DELETE FROM Orders; -- Siparişleri temizle
+DELETE FROM MenuItems; -- Menü öğelerini temizle
+DELETE FROM Categories; -- Kategorileri temizle
 
--- Kategorileri ekle ve ID'lerini değişkenlerde saklayalım
+-- Otomatik artan ID'leri sıfırlama
+DBCC CHECKIDENT ('OrderItems', RESEED, 0); -- Sipariş detayları ID'sini sıfırla
+DBCC CHECKIDENT ('Orders', RESEED, 0); -- Siparişler ID'sini sıfırla
+DBCC CHECKIDENT ('MenuItems', RESEED, 0); -- Menü öğeleri ID'sini sıfırla
+DBCC CHECKIDENT ('Categories', RESEED, 0); -- Kategoriler ID'sini sıfırla
+
+-- Kategori ID'lerini tanımlama
+DECLARE @AnaYemeklerId int;
+DECLARE @BaslangiclarId int;
+DECLARE @TatlilarId int;
+DECLARE @IceceklerId int;
+
+-- Kategorileri ekleme
 INSERT INTO Categories (Name) VALUES (N'Ana Yemekler');
-DECLARE @AnaYemeklerId int = SCOPE_IDENTITY();
+SET @AnaYemeklerId = SCOPE_IDENTITY();
 
 INSERT INTO Categories (Name) VALUES (N'Başlangıçlar');
-DECLARE @BaslangiclarId int = SCOPE_IDENTITY();
+SET @BaslangiclarId = SCOPE_IDENTITY();
 
 INSERT INTO Categories (Name) VALUES (N'Tatlılar');
-DECLARE @TatlilarId int = SCOPE_IDENTITY();
+SET @TatlilarId = SCOPE_IDENTITY();
 
 INSERT INTO Categories (Name) VALUES (N'İçecekler');
-DECLARE @IceceklerId int = SCOPE_IDENTITY();
+SET @IceceklerId = SCOPE_IDENTITY();
 
--- Menü öğelerini ekle
+-- Menü öğelerini ekleme
 INSERT INTO MenuItems (Name, Description, Price, CategoryId, ImagePath, IsAvailable) VALUES 
 -- Ana Yemekler
 (N'Klasik Burger', N'180gr dana eti, özel sos, marul, domates, turşu', 120.00, @AnaYemeklerId, '/images/burger.jpg', 1),
@@ -45,4 +60,4 @@ INSERT INTO MenuItems (Name, Description, Price, CategoryId, ImagePath, IsAvaila
 (N'Limonata', N'Ev yapımı limonata', 22.00, @IceceklerId, '/images/limonata.jpg', 1),
 (N'Çay', N'Taze demleme çay', 10.00, @IceceklerId, '/images/cay.jpg', 1),
 (N'Şalgam', N'Acılı/Acısız şalgam suyu', 15.00, @IceceklerId, '/images/salgam.jpg', 1),
-(N'Meyve Suyu', N'Portakal, elma, vişne, şeftali', 18.00, @IceceklerId, '/images/meyve-suyu.jpg', 1);
+(N'Meyve Suyu', N'Portakal, elma, vişne, şeftali', 18.00, @IceceklerId, '/images/meyve-suyu.jpg', 1); 
