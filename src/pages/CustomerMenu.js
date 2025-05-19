@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Badge, Modal, Spinner, Alert } from 'react-bootstrap';
 import { menuService } from '../services/menuService';
 import { orderService } from '../services/orderService';
+import './CustomerMenu.css';
 
 const CustomerMenu = () => {
   const [menu, setMenu] = useState([]);
@@ -132,57 +133,68 @@ const CustomerMenu = () => {
   }
 
   return (
-    <Container className="py-4">
+    <Container fluid className="customer-menu-container">
       {error && (
         <Alert variant="danger" onClose={() => setError(null)} dismissible>
           {error}
         </Alert>
       )}
 
-      <h2 className="mb-4">Masa {tableNumber} - Menü</h2>
+      <h2 className="mb-4 text-center">Masa {tableNumber} - Menü</h2>
       
       {/* Kategoriler */}
-      <div className="categories-scroll mb-4">
-        <Button 
-          variant={selectedCategory === null ? "primary" : "outline-primary"}
-          className="me-2 mb-2"
-          onClick={() => setSelectedCategory(null)}
-        >
-          Tümü
-        </Button>
-        {categories.map((category) => (
-          <Button
-            key={category.id}            variant={selectedCategory?.id === category.id ? "primary" : "outline-primary"}
-            className="me-2 mb-2"
-            onClick={() => setSelectedCategory(category)}
+      <div className="categories-wrapper mb-4">
+        <div className="categories-scroll">
+          <Button 
+            variant={selectedCategory === null ? "primary" : "outline-primary"}
+            className="category-btn"
+            onClick={() => setSelectedCategory(null)}
           >
-            {category.name}
+            Tümü
           </Button>
-        ))}
+          {categories.map((category) => (
+            <Button
+              key={category.id}
+              variant={selectedCategory?.id === category.id ? "primary" : "outline-primary"}
+              className="category-btn"
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      <Row>
+      <Row className="g-4">
         {/* Menü Listesi */}
-        <Col md={8}>
-          <Row>
+        <Col lg={8} md={7}>
+          <Row className="g-4">
             {filteredMenu.length === 0 ? (
               <Col xs={12} className="text-center text-muted py-5">
-                <span>No items.</span>
+                <span>Bu kategoride ürün bulunmamaktadır.</span>
               </Col>
             ) : (
               filteredMenu.map((item) => (
-                <Col key={item.id} md={6} className="mb-4">
-                  <Card>
-                    <Card.Img variant="top" src={item.image} alt={item.name} />
-                    <Card.Body>
-                      <Card.Title>{item.name}</Card.Title>
-                      <Card.Text>{item.description}</Card.Text>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h5>{item.price} ₺</h5>
+                <Col key={item.id} xs={12} sm={6} md={6} lg={4}>
+                  <Card className="h-100 menu-item-card">
+                    <div className="menu-item-image-wrapper">
+                      <Card.Img variant="top" src={item.image} alt={item.name} />
+                      {!item.isAvailable && (
+                        <div className="unavailable-overlay">
+                          <span>Mevcut Değil</span>
+                        </div>
+                      )}
+                    </div>
+                    <Card.Body className="d-flex flex-column">
+                      <Card.Title className="h5">{item.name}</Card.Title>
+                      <Card.Text className="flex-grow-1">{item.description}</Card.Text>
+                      <div className="d-flex justify-content-between align-items-center mt-auto">
+                        <h5 className="mb-0">{item.price} ₺</h5>
                         <Button 
                           variant="primary" 
                           onClick={() => addToCart(item)}
                           disabled={!item.isAvailable}
+                          size="sm"
                         >
                           {item.isAvailable ? 'Sepete Ekle' : 'Mevcut Değil'}
                         </Button>
@@ -196,49 +208,51 @@ const CustomerMenu = () => {
         </Col>
 
         {/* Sepet */}
-        <Col md={4}>
-          <Card className="sticky-top" style={{ top: "1rem" }}>
+        <Col lg={4} md={5}>
+          <Card className="cart-card">
             <Card.Header>
               <h4 className="mb-0">Sepetiniz - Masa {tableNumber}</h4>
             </Card.Header>
             <Card.Body>
               {cart.length === 0 ? (
-                <p>Sepetiniz boş</p>
+                <p className="text-center text-muted">Sepetiniz boş</p>
               ) : (
                 <>
-                  {cart.map((item) => (
-                    <div key={item.id} className="d-flex justify-content-between align-items-center mb-3">
-                      <div>
-                        <h6 className="mb-0">{item.name}</h6>
-                        <small className="text-muted">{item.price} ₺</small>
+                  <div className="cart-items">
+                    {cart.map((item) => (
+                      <div key={item.id} className="cart-item">
+                        <div className="cart-item-info">
+                          <h6 className="mb-0">{item.name}</h6>
+                          <small className="text-muted">{item.price} ₺</small>
+                        </div>
+                        <div className="cart-item-quantity">
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          >
+                            -
+                          </Button>
+                          <span className="mx-2">{item.quantity}</span>
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          >
+                            +
+                          </Button>
+                        </div>
                       </div>
-                      <div className="d-flex align-items-center">
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          -
-                        </Button>
-                        <span className="mx-2">{item.quantity}</span>
-                        <Button
-                          variant="outline-secondary"
-                          size="sm"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                   <hr />
-                  <div className="d-flex justify-content-between align-items-center mb-3">
+                  <div className="cart-total">
                     <h5 className="mb-0">Toplam</h5>
                     <h5 className="mb-0">{calculateTotal()} ₺</h5>
                   </div>
                   <Button
                     variant="success"
-                    className="w-100"
+                    className="w-100 mt-3"
                     onClick={() => setShowOrderModal(true)}
                     disabled={cart.length === 0}
                   >
