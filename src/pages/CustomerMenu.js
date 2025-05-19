@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Badge, Modal, Spinner, Alert } from 'react-bootstrap';
 import { menuService } from '../services/menuService';
 import { orderService } from '../services/orderService';
 
@@ -9,17 +9,27 @@ const CustomerMenu = () => {
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
   const location = useLocation();
   const tableNumber = new URLSearchParams(location.search).get('table');
 
   useEffect(() => {
     const fetchData = async () => {
-      try {        const menuData = await menuService.getAllItems();
+      try {
+        setLoading(true);
+        setError(null);
+        const menuData = await menuService.getAllItems();
         const categoriesData = await menuService.getCategories();
         setMenu(menuData);
         setCategories(categoriesData);
       } catch (error) {
+        setError('Menü yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.');
         console.error('Veri yüklenirken hata oluştu:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -57,6 +67,19 @@ const CustomerMenu = () => {
   };
 
   const submitOrder = async () => {
+    if (cart.length === 0) {
+      setError('Sepetiniz boş!');
+      return;
+    }
+
+    if (calculateTotal() < 10) {
+      setError('Minimum sipariş tutarı 10₺ olmalıdır.');
+      return;
+    }
+
+    setOrderSubmitting(true);
+    setError(null);
+
     const order = {
       tableNumber: parseInt(tableNumber),
       items: cart.map(item => ({
@@ -71,21 +94,51 @@ const CustomerMenu = () => {
 
     try {
       await orderService.createOrder(order);
-      setCart([]); // Clear cart after successful order
+      setCart([]);
+      setShowOrderModal(false);
       alert('Siparişiniz başarıyla alındı!');
     } catch (error) {
+      setError('Sipariş gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
       console.error('Sipariş gönderilirken hata oluştu:', error);
-      alert('Sipariş gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setOrderSubmitting(false);
     }
   };
+
   const filteredMenu = selectedCategory
     ? menu.filter((item) => item.categoryId === selectedCategory.id)
     : menu;
 
-  if (!tableNumber) return <Container className="py-4"><h3>Geçersiz masa numarası!</h3></Container>;
+  if (!tableNumber) {
+    return (
+      <Container className="py-4">
+        <Alert variant="danger">
+          <Alert.Heading>Hata!</Alert.Heading>
+          <p>Geçersiz masa numarası!</p>
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (loading) {
+    return (
+      <Container className="py-5 text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Yükleniyor...</span>
+        </Spinner>
+        <p className="mt-3">Menü yükleniyor...</p>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-4">
+      {error && (
+        <Alert variant="danger" onClose={() => setError(null)} dismissible>
+          {error}
+        </Alert>
+      )}
+
       <h2 className="mb-4">Masa {tableNumber} - Menü</h2>
       
       {/* Kategoriler */}
@@ -186,7 +239,7 @@ const CustomerMenu = () => {
                   <Button
                     variant="success"
                     className="w-100"
-                    onClick={submitOrder}
+                    onClick={() => setShowOrderModal(true)}
                     disabled={cart.length === 0}
                   >
                     Siparişi Gönder
@@ -197,6 +250,55 @@ const CustomerMenu = () => {
           </Card>
         </Col>
       </Row>
+
+      {/* Sipariş Onay Modalı */}
+      <Modal show={showOrderModal} onHide={() => setShowOrderModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Siparişi Onayla</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Siparişinizi onaylamak istiyor musunuz?</p>
+          <div className="mb-3">
+            <strong>Toplam Tutar:</strong> {calculateTotal()} ₺
+          </div>
+          <div className="mb-3">
+            <strong>Sipariş Özeti:</strong>
+            <ul className="list-unstyled mt-2">
+              {cart.map(item => (
+                <li key={item.id}>
+                  {item.name} x {item.quantity} = {item.price * item.quantity} ₺
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowOrderModal(false)}>
+            İptal
+          </Button>
+          <Button 
+            variant="success" 
+            onClick={submitOrder}
+            disabled={orderSubmitting}
+          >
+            {orderSubmitting ? (
+              <>
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+                Gönderiliyor...
+              </>
+            ) : (
+              'Onayla ve Gönder'
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
